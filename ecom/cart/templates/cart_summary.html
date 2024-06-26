@@ -1,0 +1,85 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+    .card {
+        margin-bottom: 1rem; /* Reduce margin between cards */
+        max-width: 600px; /* Set a fixed max width for cards */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .card-body {
+        padding: 10px; /* Reduce padding inside card */
+    }
+    .card-title, .card-text {
+        margin-bottom: 0rem; /* Reduce margin */
+    }
+    .img-fluid {
+        max-height: 200px; /* Set a max height for the image */
+        object-fit: cover; /* Ensure the image covers the specified area */
+    }
+    .btn-secondary {
+        margin-top: 10px; /* Adjust button margin */
+    }
+    .text-center {
+        text-align: center;
+    }
+</style>
+<!-- Header-->
+<header class="bg-dark py-5">
+  <div class="container px-4 px-lg-5 my-5">
+    <div class="text-center text-white">
+      <h1 class="display-4 fw-bolder">Shopping Cart</h1>
+      <p class="lead fw-normal text-white-50 mb-0">
+        View Your Cart
+      </p>
+    </div>
+  </div>
+</header>
+
+<br/><br/>
+
+<div class="container">
+    {% if cart_products %}
+    {% for product in cart_products %}
+    <div class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body text-center">
+                    <h4 class="card-title">{{ product.name }}</h4>
+                    <br/><br/>
+                    <!-- Product price -->
+                    {% if product.is_sale %}
+                    <div class="d-flex justify-content-center small text-warning mb-3">
+                        <h6> !!! Sale !!! </h6>
+                    </div>
+                    <strike>${{ product.price }}</strike>
+                    &nbsp;
+                    ${{ product.sale_price }}
+                    {% else %}
+                    ${{ product.price }}
+                    {% endif %}
+                    
+                    <br/><br/>
+                    
+                    <a href="{% url 'home' %}" class="btn btn-secondary"><- Back </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <br/><br/>
+    <center>
+        <h5 class="display-6 fw-bolder">There is nothing in your cart...</h5>
+        <br/><br/>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Let's Go Shopping! </a>
+    </center>
+    <br/><br/>
+    <br/><br/>
+    {% endif %}
+</div>
+
+<br/><br/>
+{% endblock %}

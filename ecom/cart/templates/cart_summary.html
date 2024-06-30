@@ -48,7 +48,7 @@
             <div class="col-md-8">
                 <div class="card-body text-center">
                     <h4 class="card-title">{{ product.name }}</h4>
-                    <br/><br/>
+                    <br/>
                     <!-- Product price -->
                     {% if product.is_sale %}
                     <div class="d-flex justify-content-center small text-warning mb-3">
@@ -56,30 +56,112 @@
                     </div>
                     <strike>${{ product.price }}</strike>
                     &nbsp;
-                    ${{ product.sale_price }}
+                    <h5> ${{ product.sale_price }}</h5>
                     {% else %}
-                    ${{ product.price }}
+                    <h5> ${{ product.price }} </h5>
                     {% endif %}
+                    <br/>
+                    <div class="row justify-content-center">
+                        <br/>
+                        <div class="col-md-3">Quantity: </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="select{{product.id}}" >
+                                {% for k, v in quantities.items %}
+                                    <!-- slugify: Turn product.id to integer -->
+                                    {% if k == product.id|slugify %} 
+                                    <option selected>{{ v }}</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option> 
+                                    <option value="3">4</option> 
+                                    <option value="3">5</option> 
+                                    {% endif %}
+                                {% endfor %}
+                                
+                            </select>
+                        </div>
+                    </div>
                     
-                    <br/><br/>
-                    
-                    <a href="{% url 'home' %}" class="btn btn-secondary"><- Back </a>
+                    <button type="button" data-index="{{product.id}}" 
+                    class="btn btn-primary update-cart"> Update </button>
+                    <button type="button" data-index="{{product.id}}" 
+                    class="btn btn-danger delete-product"> Remove </button>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
+    <h3 style="text-align: center;">Total: ${{ totals }}</h3>
+
     {% else %}
-    <br/><br/>
-    <center>
-        <h5 class="display-6 fw-bolder">There is nothing in your cart...</h5>
         <br/><br/>
-        <a href="{% url 'home' %}" class="btn btn-secondary">Let's Go Shopping! </a>
-    </center>
-    <br/><br/>
-    <br/><br/>
+            <center>
+                <h5 class="display-6 fw-bolder">There is nothing in your cart...</h5>
+                <br/><br/>
+                <a href="{% url 'home' %}" class="btn btn-secondary">Let's Go Shopping! </a>
+            </center>
+        <br/><br/>
+        <br/><br/>
     {% endif %}
 </div>
 
 <br/><br/>
+
+<!--Javascript-->
+<script>
+    // Update Cart
+    $(document).on('click', '.update-cart', function(e){
+        e.preventDefault();
+        // Grab product ID
+        var productID = $(this).data('index')
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_update' %}',
+            data:{
+                product_id: $(this).data('index'),
+                product_qty: $('#select' + productID + ' option:selected').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post',
+            },
+            
+            
+            success: function(json){
+                // Reload Page if Success
+                location.reload();
+            },
+    
+            error: function(xhr, errmsg, err){
+                console.log('AJAX error: ' + errmsg);
+            }
+        });
+        
+    })
+    
+    // Remove Items from Cart
+    $(document).on('click', '.delete-product', function(e){
+        e.preventDefault();
+        
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_delete' %}',
+            data:{
+                product_id: $(this).data('index'),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post',
+            },
+            
+            
+            success: function(json){
+                // Reload Page if Success
+                location.reload();
+            },
+    
+            error: function(xhr, errmsg, err){
+                console.log('AJAX error: ' + errmsg);
+            }
+        });
+        
+    })
+</script>
+
 {% endblock %}

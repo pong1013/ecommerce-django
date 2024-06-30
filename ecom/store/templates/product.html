@@ -28,8 +28,21 @@
                         ${{ product.price }}
                         {% endif %}
                         
+
                         <br/><br/>
-                        <br/><br/>
+                <div class="row justify-content-center">
+                    <div class="col-md-2">Quantity: </div>
+                    <div class="col-md-2">
+                        <select class="form-select" id="quantity-cart" >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option> 
+                            <option value="3">4</option> 
+                            <option value="3">5</option> 
+                        </select>
+                    </div>
+                </div>
+                        <br/>
                         <a href="{% url 'home' %}" class="btn btn-secondary"><- Back </a>
                         <button type="button" class="btn btn-secondary" value="{{ product.id}}" id="add-cart" >Add to cart</button>
                     </center>
@@ -52,6 +65,7 @@ $(document).on('click', '#add-cart', function(e){
         url: '{% url 'cart_add' %}',
         data:{
             product_id: $('#add-cart').val(),
+            product_qty: $('#quantity-cart option:selected').text(),
             csrfmiddlewaretoken: '{{ csrf_token }}',
             action: 'post',
         },
@@ -59,7 +73,12 @@ $(document).on('click', '#add-cart', function(e){
         
         success: function(json){
             console.log(json)
-            document.getElementById('cart_quanatity').textContent = json.Quantity
+            var cartQuantityElement = document.getElementById('cart_quantity');
+            if (cartQuantityElement) {
+                cartQuantityElement.textContent = json.Quantity;
+                
+            }
+            location.reload();
         },
 
         error: function(xhr, errmsg, err){

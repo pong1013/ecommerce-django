@@ -39,7 +39,7 @@ Implementing an E-commerce Website Using Django.
 - [x] Customer Session
 - [x] Show Quantity on Navbar
 - [x] Update and Delete items
-- [ ] Save items in Session
+- [x] Save items in Session
 - [ ] Persistant Cart items
 
 **User Function**
